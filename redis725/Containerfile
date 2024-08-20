@@ -1,0 +1,14 @@
+ARG IMAGE_MAJOR_VERSION=40
+ARG BASE_IMAGE_URL=registry.fedoraproject.org/fedora
+
+FROM ${BASE_IMAGE_URL}:${IMAGE_MAJOR_VERSION}
+
+USER 0
+
+RUN dnf install -y redis && mkdir /etc/redis.d && chmod 755 /etc/redis.d && mkdir -p /var/lib/redis/data && chown -R 1001:0 /var/lib/redis
+COPY --chown=1001:0 redis.conf /etc/redis.d/redis.conf
+RUN chmod -R 644 /etc/redis.d/redis.conf
+
+USER 1001
+
+CMD redis-server /etc/redis.d/redis.conf
